@@ -1,6 +1,6 @@
 # !/bin/bash
 
 docker run --rm -it \
-  -v "$(pwd)/bpmn:/input" \
-  -v "$(pwd)/out:/output" \
+  -v "$(pwd)/bpmn:/app/input" \
+  -v "$(pwd)/out:/app/output" \
   bko712/workflow-generator
