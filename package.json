@@ -1,0 +1,12 @@
+{
+  "name": "tol-workflow-docs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "bpmn-to-image": "^0.5.1"
+  },
+  "scripts": {
+    "generate": "rm -rf out && mkdir out && node index.js"
+  }
+}

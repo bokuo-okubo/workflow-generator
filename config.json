@@ -1,0 +1,5 @@
+{
+  "bpmnDir": "./bpmn",
+  "outDir": "./out",
+  "outputExts": ["png", "svg"]
+}
