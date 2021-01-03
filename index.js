@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const fs = require("fs");
 const path = require("path");
 // https://github.com/bpmn-io/bpmn-to-image
@@ -40,24 +42,27 @@ const walking = (targetPath) => {
 };
 // ----------------------------------
 
-async function main(bpmnDir, outDir, outputExts) {
-  const inputDir = path.resolve(__dirname, bpmnDir);
+const main = async (inputDir, outputDir, exts) => {
+  const _inputDir = path.resolve(__dirname, inputDir);
 
   // ary created by each bpmn files.
-  let pathResults = await walking(inputDir);
-  pathResults = pathResults.map((r) => ({
-    full: r,
-    relative: r.replace(path.resolve(__dirname, bpmnDir), ""),
-    basename: path.basename(r),
-  }));
+  let pathResults = await walking(_inputDir);
+  pathResults = pathResults
+    .filter((r) => /^.*\.bpmn$/.test(r))
+    .map((r) => ({
+      full: r,
+      relative: r.replace(path.resolve(__dirname, inputDir), ""),
+      basename: path.basename(r),
+    }));
 
   const params = pathResults.map((p) => {
     const tmp = p.basename.split(".")[0];
+    console.log(p, tmp);
     if (!tmp) throw Error("wrong file name", p);
 
-    const outFileNames = outputExts.map((ex) => [tmp, ex].join(".")); // filename.png | filename.svg
+    const outFileNames = exts.map((ex) => [tmp, ex].join(".")); // filename.png | filename.svg
     const outputPaths = outFileNames.map((n) =>
-      path.join(__dirname, outDir, path.dirname(p.relative), n)
+      path.join(__dirname, outputDir, path.dirname(p.relative), n)
     );
     return {
       input: p.full,
@@ -74,9 +79,17 @@ async function main(bpmnDir, outDir, outputExts) {
   console.log(params);
 
   await convertAll(params);
-}
+};
 
 // ---------------------------
-// entry point.
-const config = require("./config.json");
-main(config.bpmnDir, config.outDir, config.outputExts).catch(console.error);
+const yargs = require("yargs/yargs");
+const { hideBin } = require("yargs/helpers");
+const argv = yargs(hideBin(process.argv)).argv;
+// ./index.js --inputDir=./bpmn --outputDir=./out --exts=png,svg
+if (argv.inputDir && argv.outputDir && argv.exts) {
+  const args = [argv.inputDir, argv.outputDir, argv.exts.split(",")];
+  console.log(args);
+  main(...args).catch(console.error);
+} else {
+  console.log("wrong arguments!");
+}
