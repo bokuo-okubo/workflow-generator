@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "bpmn-to-image": "^0.5.1"
+    "bpmn-to-image": "^0.5.1",
+    "yargs": "^16.2.0"
   },
   "scripts": {
     "generate": "rm -rf out && mkdir out && node index.js"
